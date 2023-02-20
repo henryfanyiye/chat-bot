@@ -6,6 +6,7 @@
     <title>Chat Room</title>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="./css/index.css">
 </head>
 
 <body>
@@ -46,61 +47,5 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script>
-  new Vue({
-    el: '#app',
-    data: {
-      messages: [],
-      newMessage: '',
-      loading: false
-    },
-    created: function () {
-    },
-    methods: {
-      sendMessage: function () {
-        if (this.newMessage) {
-          this.messages.push({type: "Q", msg: this.newMessage})
-          const content = this.newMessage.slice()
-          this.newMessage = ''
-          this.loading = true
-          let that = this;
-          // 使用jQuery库发送POST请求
-          $.ajax({
-            type: 'POST',
-            url: '/api/chat/question',
-            timeout: 60000,
-            jsonp: true,
-            data: {content},
-            success: function (res) {
-              // console.log(res)
-              // 处理返回的数据
-              if (res.code && res.code == 200) {
-                that.messages.push({type: "A", msg: res.data})
-              } else {
-                that.messages.push({type: "A", msg: "An error occurred, please try again"})
-              }
-              that.loading = false
-            },
-            error: function (err) {
-              console.log(err)
-              // 处理请求出错的情况
-              that.messages.push({type: "A", msg: err.messages || "An error occurred, please try again"})
-              that.loading = false
-            }
-          })
-        }
-      }
-    }
-  });
-</script>
-<style>
-    .el-header {
-        text-align: center;
-    }
-
-    .grid-content {
-        border-radius: 4px;
-        min-height: 36px;
-    }
-</style>
+<script src="./js/index.js"></script>
 </html>
