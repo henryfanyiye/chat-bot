@@ -4,36 +4,55 @@
 <head>
     <meta charset="utf-8">
     <title>Chat Room</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <!--引入 element-ui 的样式，-->
+    <!-- 引入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <!-- 必须先引入vue，  后使用element-ui -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
-    <!-- 引入element 的组件库-->
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 
 <body>
 <div id="app">
-    <h1>Chat Room</h1>
-    <div class="message-list">
-        <div v-for="{type,msg} in messages">{{ type}}：{{ msg }}</div>
-    </div>
-    <div class="input-box">
-        <input type="text" v-model="newMessage" @keyup.enter="sendMessage">
-        <button @click="sendMessage">Send</button>
-    </div>
+    <el-row>
+        <el-col :span="8">
+            <div class="grid-content"></div>
+        </el-col>
+        <el-col :span="8">
+            <div class="grid-content">
+                <el-container>
+                    <el-header>
+                        <h1>Chat Room</h1>
+                    </el-header>
+                    <el-main>
+                        <div v-for="{type,msg} in messages">{{ type}}：{{ msg }}</div>
+
+                    </el-main>
+                    <el-footer>
+                        <el-input
+                                v-model="newMessage"
+                                @keyup.enter.native="sendMessage"
+                                suffix-icon="el-icon-s-promotion"
+                                v-loadong="loading"
+                        ></el-input>
+                    </el-footer>
+                </el-container>
+            </div>
+        </el-col>
+        <el-col :span="8">
+            <div class="grid-content"></div>
+        </el-col>
+    </el-row>
 </div>
 </body>
-
-</html>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<!-- 必须先引入vue，  后使用element-ui -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script>
   new Vue({
     el: '#app',
     data: {
       messages: [],
-      newMessage: ''
+      newMessage: '',
+      loading: false
     },
     created: function () {
     },
@@ -43,6 +62,7 @@
           this.messages.push({type: "Q", msg: this.newMessage})
           const content = this.newMessage.slice()
           this.newMessage = ''
+          this.loading = true
           let that = this;
           // 使用jQuery库发送POST请求
           $.ajax({
@@ -52,13 +72,20 @@
             jsonp: true,
             data: {content},
             success: function (res) {
+              // console.log(res)
               // 处理返回的数据
-              that.messages.push({type: "A", msg: res.data})
+              if (res.code && res.code == 200) {
+                that.messages.push({type: "A", msg: res.data})
+              } else {
+                that.messages.push({type: "A", msg: "An error occurred, please try again"})
+              }
+              that.loading = false
             },
             error: function (err) {
               console.log(err)
               // 处理请求出错的情况
-              that.messages.push({type: "A", msg: err.messages})
+              that.messages.push({type: "A", msg: err.messages || "An error occurred, please try again"})
+              that.loading = false
             }
           })
         }
@@ -66,3 +93,14 @@
     }
   });
 </script>
+<style>
+    .el-header {
+        text-align: center;
+    }
+
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+</style>
+</html>

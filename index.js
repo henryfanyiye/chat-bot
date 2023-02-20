@@ -18,6 +18,7 @@ const app = express()
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cors());
+app.use('/', express.static('public'));
 app.use('/chat', express.static('public/chat.html'));
 
 const loggerMiddleware = require('./src/middleware/logger')
