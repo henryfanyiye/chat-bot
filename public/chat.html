@@ -22,16 +22,18 @@
                         <h1>Chat Room</h1>
                     </el-header>
                     <el-main>
-                        <div v-for="{type,msg} in messages">{{ type}}：{{ msg }}</div>
-
+                        <div v-for="{type,msg} in messages">
+                            {{ type}}：{{ msg }}
+                        </div>
                     </el-main>
                     <el-footer>
                         <el-input
                                 v-model="newMessage"
                                 @keyup.enter.native="sendMessage"
                                 suffix-icon="el-icon-s-promotion"
-                                v-loadong="loading"
-                        ></el-input>
+                                :disabled="disabled"
+                        >
+                        </el-input>
                     </el-footer>
                 </el-container>
             </div>

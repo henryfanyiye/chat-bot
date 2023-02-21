@@ -3,7 +3,7 @@ new Vue({
   data: {
     messages: [],
     newMessage: '',
-    loading: false
+    disabled: false
   },
   created: function () {
   },
@@ -12,9 +12,11 @@ new Vue({
       if (this.newMessage) {
         this.messages.push({type: "Q", msg: this.newMessage})
         const content = this.newMessage.slice()
+
         this.newMessage = ''
-        this.loading = true
+
         let that = this;
+        that.disabled = true
         // 使用jQuery库发送POST请求
         $.ajax({
           type: 'POST',
@@ -22,21 +24,19 @@ new Vue({
           timeout: 60000,
           jsonp: true,
           data: {content},
-          success: function (res) {
-            // console.log(res)
+          success: (res) => {
             // 处理返回的数据
             if (res.code && res.code == 200) {
               that.messages.push({type: "A", msg: res.data})
             } else {
               that.messages.push({type: "A", msg: "An error occurred, please try again"})
             }
-            that.loading = false
+            that.disabled = false
           },
-          error: function (err) {
-            console.log(err)
+          error: (err) => {
             // 处理请求出错的情况
             that.messages.push({type: "A", msg: err.messages || "An error occurred, please try again"})
-            that.loading = false
+            that.disabled = false
           }
         })
       }
