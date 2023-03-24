@@ -22,6 +22,8 @@ new Vue({
           type: 'POST',
           url: '/api/chat/question',
           timeout: 60000,
+          crossDomain: true,
+          xhrFields: {withCredentials: true},
           jsonp: true,
           data: {content},
           success: (res) => {

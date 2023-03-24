@@ -1,10 +1,8 @@
 'use strict'
-const logger = require('../lib/logger')
-
 module.exports = async (req, res, next) => {
   const method = req.method
   const url = req.originalUrl
-  logger.info(JSON.stringify({type: 'Request', method, url, body: req.body}))
+  console.log(JSON.stringify({type: 'Request', method, url, body: req.body}))
 
   const defaultWrite = res.write;
   const defaultEnd = res.end;
